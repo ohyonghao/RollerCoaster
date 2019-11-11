@@ -4,8 +4,8 @@
  * (c) 2001-2002 Stephen Chenney, University of Wisconsin at Madison
  */
 
-#ifndef _CUBICBSPLINE_H_
-#define _CUBICBSPLINE_H_
+#ifndef CUBICBSPLINE_H
+#define CUBICBSPLINE_H
 
 #include <stdio.h>
 
@@ -13,18 +13,19 @@
 class CubicBspline {
   private:
     unsigned short  d;		/* The dimension of each point on the curve. */
-    unsigned short  n;		/* The number of control points. */
-    float   	    **c_pts;	/* The control points. */
+    unsigned short  n{0};		/* The number of control points. */
+    double   	    **c_pts{nullptr};	/* The control points. */
     bool	    loop;	/* Whether the curve loops or not. */
 
   public:
     /* Initializes with the given dimension and no control points. */
     CubicBspline(const unsigned short dim = 3, const bool l = true)
-	{ d = dim; n = 0; c_pts = NULL; loop = l; };
+        : d{dim}
+        , loop{l}{}
 
     /* Initializes with the given dimension and control points. */
-    CubicBspline(const unsigned short, const unsigned short, float**,
-		 const bool);
+    CubicBspline(const unsigned short, const unsigned short, double **,
+         const bool);
 
     /* Destructor. */
     ~CubicBspline(void);
@@ -33,10 +34,10 @@ class CubicBspline {
     CubicBspline& operator=(const CubicBspline&);
 
     /* Query the dimension. */
-    unsigned short	D(void) { return d; };
+    unsigned short	D(void) { return d; }
 
     /* Query the number of control points. */
-    unsigned short	N(void) { return n; };
+    unsigned short	N(void) { return n; }
 
     /* Query a control point, putting the value into the given array.
     ** Throws an exception if the index is out of range. */
@@ -64,12 +65,12 @@ class CubicBspline {
     /* Evaluate the curve at a parameter value and copy the result into
     ** the given array. Throws an exception if the parameter is out of
     ** range, unless told to wrap. */
-    void    Evaluate_Point(const float, float*);
+    void    Evaluate_Point(const double, double *);
 
     /* Evaluate the derivative at a parameter value and copy the result into
     ** the given array. Throws an exception if the parameter is out of
     ** range, unless told to wrap. */
-    void    Evaluate_Derivative(const float, float*);
+    void    Evaluate_Derivative(const double, double*);
 
     /* Refine the curve one level, putting the result into the given curve. This
     ** will correctly account for cyclic curves. There is also a tolerance
@@ -78,7 +79,7 @@ class CubicBspline {
     void    Refine_Tolerance(CubicBspline&, const float);
 
   private:
-    void    Copy_Controls(float**);
+    void    Copy_Controls(double **);
     void    Delete_Controls(void);
     bool    Within_Tolerance(const float);
 };

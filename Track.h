@@ -5,21 +5,21 @@
  */
 
 
-#ifndef _TRAINTRACK_H_
-#define _TRAINTRACK_H_
+#ifndef TRAINTRACK_H
+#define TRAINTRACK_H
 
-#include <Fl/gl.h>
+#include <QOpenGLFunctions>
 #include "CubicBspline.h"
 
-class Track {
+class Track : protected QOpenGLFunctions {
   private:
     GLubyte 	    track_list;	    // The display list for the track.
     GLubyte 	    train_list;	    // The display list for the train.
-    bool    	    initialized;    // Whether or not we have been initialized.
+    bool    	    initialized{false};    // Whether or not we have been initialized.
     CubicBspline    *track;	    // The spline that defines the track.
-    float	    posn_on_track;  // The train's parametric position on the
+    float	    posn_on_track{0.0f};  // The train's parametric position on the
 				    // track.
-    float	    speed;	    // The train's speed, in world coordinates
+    float	    speed{0.0f};	    // The train's speed, in world coordinates
 
     static const int	TRACK_NUM_CONTROLS;	// Constants about the track.
     static const float 	TRACK_CONTROLS[][3];
@@ -27,13 +27,13 @@ class Track {
 
   public:
     // Constructor
-    Track(void) { initialized = false; posn_on_track = 0.0f; speed = 0.0f; };
+    Track(void):QOpenGLFunctions{} { }
 
     // Destructor
     ~Track(void);
 
     bool    Initialize(void);	// Gets everything set up for drawing.
-    void    Update(float);	// Updates the location of the train
+    void    Update(double);	// Updates the location of the train
     void    Draw(void);		// Draws everything.
 };
 

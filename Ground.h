@@ -5,21 +5,21 @@
  */
 
 
-#ifndef _GROUND_H_
-#define _GROUND_H_
+#ifndef GROUND_H
+#define GROUND_H
 
-#include <Fl/gl.h>
+#include <QOpenGLFunctions>
 
-class Ground {
+class Ground : protected QOpenGLFunctions {
   private:
-    GLubyte display_list;   // The display list that does all the work.
-    GLuint  texture_obj;    // The object for the grass texture.
-    bool    initialized;    // Whether or not we have been initialised.
+    GLubyte display_list{0};   // The display list that does all the work.
+    GLuint  texture_obj{0};    // The object for the grass texture.
+    bool    initialized{false};    // Whether or not we have been initialised.
 
   public:
     // Constructor. Can't do initialization here because we are
     // created before the OpenGL context is set up.
-    Ground(void) { display_list = 0; initialized = false; };
+    Ground(void):QOpenGLFunctions{}, texture_obj{} { }
 
     // Destructor. Frees the display lists and texture object.
     ~Ground(void);

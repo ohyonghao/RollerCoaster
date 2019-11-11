@@ -1,0 +1,62 @@
+#ifndef GL_WIDGET_H
+#define GL_WIDGET_H
+
+#include <QObject>
+#include <QGLWidget>
+#include <QMatrix4x4>
+#include <QGLShaderProgram>
+#include <QVector>
+#include <QVector3D>
+#include <QTimer>
+#include "Ground.h"
+#include "Track.h"
+
+class GLWidget : public QGLWidget//, protected QOpenGLFunctions
+{
+    Q_OBJECT
+    const double FOV_X {45.0};
+
+    public:
+        explicit GLWidget(QWidget* parent = nullptr);
+        virtual ~GLWidget() override;
+        QSize sizeHint() const override;
+
+    protected:
+        void initializeGL() override;
+        void resizeGL(int width, int height) override;
+        void paintGL() override;
+        void mousePressEvent(QMouseEvent *event) override;
+        void mouseMoveEvent(QMouseEvent *event) override;
+    private:
+        QMatrix4x4 pMatrix;
+        QGLShaderProgram shaderProgram;
+        QVector<QVector3D> vertices;
+
+        Ground *ground{nullptr};
+        Track *track{nullptr};
+
+        QTimer coasterTimer;
+
+        // Camera
+        double phi = 45.0;
+        double theta = 0.0;
+        double dist = 100.0;
+        double x_at = 0.0;
+        double y_at = 0.0;
+
+        // Mouse
+        double  phi_down;   // The view inclination angle when the mouse
+                            // button was pushed
+        double  theta_down; // The view azimuthal angle when the mouse
+                            // button was pushed
+        double	dist_down;  // The distance when the mouse button is pushed.
+        double	x_at_down;  // The x-coord to look at when the mouse went down.
+        double	y_at_down;  // The y-coord to look at when the mouse went down.
+        QPoint downPos; // location of last click
+
+public slots:
+
+        void updateCoaster();
+};
+
+#endif // GL_WIDGET_H

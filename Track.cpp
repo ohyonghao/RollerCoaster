@@ -6,8 +6,9 @@
 
 
 #include "Track.h"
-#include <stdio.h>
-#include <FL/math.h>
+#include <cmath>
+#include <GL/glu.h>
+#include <QOpenGLFunctions>
 
 
 // The control points for the track spline.
@@ -22,16 +23,16 @@ const float Track::TRAIN_ENERGY = 250.0f;
 
 // Normalize a 3d vector.
 static void
-Normalize_3(float v[3])
+Normalize_3(double v[3])
 {
     double  l = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 
-    if ( l == 0.0 )
+    if (!( l > 0.0) )
 	return;
 
-    v[0] /= (float)l;
-    v[1] /= (float)l;
-    v[2] /= (float)l;
+    v[0] /= l;
+    v[1] /= l;
+    v[2] /= l;
 }
 
 
@@ -50,9 +51,10 @@ Track::~Track(void)
 bool
 Track::Initialize(void)
 {
+    initializeOpenGLFunctions();
     CubicBspline    refined(3, true);
     int		    n_refined;
-    float	    p[3];
+    double	    p[3];
     int		    i;
 
     // Create the track spline.
@@ -75,8 +77,8 @@ Track::Initialize(void)
 	glBegin(GL_LINE_STRIP);
 	    for ( i = 0 ; i <= n_refined ; i++ )
 	    {
-		refined.Evaluate_Point((float)i, p);
-		glVertex3fv(p);
+        refined.Evaluate_Point(i, p);
+        glVertex3dv(p);
 	    }
 	glEnd();
     glEndList();
@@ -136,8 +138,8 @@ Track::Initialize(void)
 void
 Track::Draw(void)
 {
-    float   posn[3];
-    float   tangent[3];
+    double   posn[3];
+    double   tangent[3];
     double  angle;
 
     if ( ! initialized )
@@ -177,10 +179,10 @@ Track::Draw(void)
 
 
 void
-Track::Update(float dt)
+Track::Update(double dt)
 {
-    float   point[3];
-    float   deriv[3];
+    double   point[3];
+    double   deriv[3];
     double  length;
     double  parametric_speed;
 

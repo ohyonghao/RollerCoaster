@@ -7,9 +7,11 @@
 
 #include "Ground.h"
 #include "libtarga.h"
-#include <stdio.h>
 #include <GL/glu.h>
+#include <QOpenGLFunctions>
+#include <iostream>
 
+using namespace std;
 // Destructor
 Ground::~Ground(void)
 {
@@ -34,10 +36,11 @@ Ground::Initialize(void)
     if ( ! ( image_data = (ubyte*)tga_load("grass.tga", &image_width,
 					   &image_height, TGA_TRUECOLOR_24) ) )
     {
-	fprintf(stderr, "Ground::Initialize: Couldn't load grass.tga\n");
-	return false;
+        cout << "Ground::Initialize: Couldn't load grass.tga\n";
+        return false;
     }
 
+    initializeOpenGLFunctions();
     // This creates a texture object and binds it, so the next few operations
     // apply to this texture.
     glGenTextures(1, &texture_obj);

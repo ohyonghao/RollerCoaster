@@ -5,20 +5,19 @@
  */
 
 #include "CubicBspline.h"
-#include "GenericException.h"
-#include <math.h>
+//#include "GenericException.h"
+#include <cmath>
 
 
 /* Initializes with the given dimension and control points. */
 CubicBspline::CubicBspline(const unsigned short dim, const unsigned short num,
-                           float **c_in, const bool l)
+                           double **c_in, const bool l)
+    : d{dim}
+    , n{num}
+    , loop{l}
 {
-    d = dim;
-    n = num;
-
     Copy_Controls(c_in);
 
-    loop = l;
 }
 
 
@@ -52,8 +51,8 @@ void
 CubicBspline::C(unsigned short index, float *pt)
 {
     int i;
-    if ( index >= n )
-	throw new GenericException("CubicBspline::C - Index out of range");
+    //if ( index >= n )
+    //throw new GenericException("CubicBspline::C - Index out of range");
 
     for ( i = 0 ; i < d ; i++ )
 	pt[i] = c_pts[index][i];
@@ -67,9 +66,8 @@ CubicBspline::Set_Control(const float *pt, const unsigned short posn)
 {
     int i;
 
-    if ( posn >= n )
-	throw new GenericException(
-	    "CubicBspline::Set_Control - Posn out of range");
+    //if ( posn >= n )
+    //throw new GenericException("CubicBspline::Set_Control - Posn out of range");
 
     for ( i = 0 ; i < d ; i++ )
 	c_pts[posn][i] = pt[i];
@@ -81,7 +79,7 @@ CubicBspline::Set_Control(const float *pt, const unsigned short posn)
 void
 CubicBspline::Append_Control(const float *pt)
 {
-    float   **c_new = new float*[n + 1];
+    double   **c_new = new double*[n + 1];
     int     i;
 
     // Copy the old points over.
@@ -89,7 +87,7 @@ CubicBspline::Append_Control(const float *pt)
 	c_new[i] = c_pts[i];
 
     // Add the new one.
-    c_new[n] = new float[d];
+    c_new[n] = new double[d];
     for ( i = 0 ; i < d ; i++ )
 	c_new[n][i] = pt[i];
 
@@ -108,19 +106,18 @@ CubicBspline::Append_Control(const float *pt)
 void
 CubicBspline::Insert_Control(const float *pt, const unsigned short posn)
 {
-    float   **c_new = new float*[n + 1];
+    double   **c_new = new double*[n + 1];
     int     i;
 
-    if ( posn > n )
-	throw new GenericException(
-	    "CubicBspline::Insert_Control - Posn out of range");
+//    if ( posn > n )
+//	throw new GenericException("CubicBspline::Insert_Control - Posn out of range");
 
     // Copy some points over.
     for ( i = 0 ; i < posn ; i++ )
 	c_new[i] = c_pts[i];
 
     // Add the new one.
-    c_new[posn] = new float[d];
+    c_new[posn] = new double[d];
     for ( i = 0 ; i < d ; i++ )
 	c_new[posn][i] = pt[i];
 
@@ -144,9 +141,9 @@ CubicBspline::Delete_Control(const unsigned short posn)
 {
     int i;
 
-    if ( posn >= n )
-	throw new GenericException(
-	    "CubicBspline::Delete_Control - Posn out of range");
+//    if ( posn >= n )
+//	throw new GenericException(
+//	    "CubicBspline::Delete_Control - Posn out of range");
 
     // Get rid of the undesired control point
     delete[] c_pts[posn];
@@ -164,7 +161,7 @@ CubicBspline::Delete_Control(const unsigned short posn)
 ** the given array. Throws an exception if the parameter is out of
 ** range, unless the curve is a loop. */
 void
-CubicBspline::Evaluate_Point(const float t, float *pt)
+CubicBspline::Evaluate_Point(const double t, double *pt)
 {
     int     posn;
     float   u;
@@ -175,11 +172,11 @@ CubicBspline::Evaluate_Point(const float t, float *pt)
 
     posn = (int)floor(t);
 
-    if ( posn > n - 4 && ! loop )
-    {
-	throw new GenericException(
-	    "CubicBspline::EvaluatePoint - Parameter value out of range");
-    }
+//    if ( posn > n - 4 && ! loop )
+//    {
+//	throw new GenericException(
+//	    "CubicBspline::EvaluatePoint - Parameter value out of range");
+//    }
 
     u = t - posn;
     u_sq = u * u;
@@ -211,35 +208,35 @@ CubicBspline::Evaluate_Point(const float t, float *pt)
 ** the given array. Throws an exception if the parameter is out of
 ** range, unless the curve is a loop. */
 void
-CubicBspline::Evaluate_Derivative(const float t, float *deriv)
+CubicBspline::Evaluate_Derivative(const double t, double *deriv)
 {
     int     posn;
-    float   u;
-    float   u_sq;
-    float   basis[4];
+    double   u;
+    double   u_sq;
+    double   basis[4];
     int     i, j;
 
-    posn = (int)floor(t);
+    posn = static_cast<int>(floor(t));
 
-    if ( posn > n - 4 && ! loop )
-    {
-	throw new GenericException(
-	    "CubicBspline::EvaluatePoint - Parameter value out of range");
-    }
+//    if ( posn > n - 4 && ! loop )
+//    {
+//	throw new GenericException(
+//	    "CubicBspline::EvaluatePoint - Parameter value out of range");
+//    }
 
     u = t - posn;
     u_sq = u * u;
 
     /* Evaluate the derivatives of the blending functions at the parameter
     ** value. */
-    basis[0] = -3.0f * u_sq + 6.0f * u - 3.0f;
-    basis[1] = 9.0f * u_sq - 12.0f * u;
-    basis[2] = -9.0f * u_sq + 6.0f * u + 3.0f;
-    basis[3] = 3.0f * u_sq;
+    basis[0] = -3.0 * u_sq + 6.0 * u - 3.0;
+    basis[1] = 9.0 * u_sq - 12.0 * u;
+    basis[2] = -9.0 * u_sq + 6.0 * u + 3.0;
+    basis[3] = 3.0 * u_sq;
 
     /* Now it's just like evaluating a point. */
     for ( j = 0 ; j < d ; j++ )
-	deriv[j] = 0.0f;
+    deriv[j] = 0.0;
     for ( i = 0 ; i < 4 ; i++ )
     {
 	int index = ( posn + i ) % n;
@@ -247,7 +244,7 @@ CubicBspline::Evaluate_Derivative(const float t, float *deriv)
 	    deriv[j] += c_pts[index][j] * basis[i];
     }
     for ( j = 0 ; j < d ; j++ )
-	deriv[j] /= 6.0f;
+    deriv[j] /= 6.0;
 }
 
 
@@ -257,18 +254,18 @@ void
 CubicBspline::Refine(CubicBspline &result)
 {
     int	    new_n;
-    float   **new_c;
+    double   **new_c;
     int     i, j, k;
 
     /* Figure out how many new vertices. */
     if ( loop )
-	new_n = n * 2;
+        new_n = n * 2;
     else
-	new_n = n * 2 - 3;
+        new_n = n * 2 - 3;
 
     /* This creates two new controls for each existing one, except for the
     ** first and last control points (unless it loops.) */
-    new_c = new float*[new_n];
+    new_c = new double*[new_n];
     for ( i = 0, k = 0 ; i < new_n ; i+=2, k++ )
     {
 	/* This figures out which control points to average for the new pts. */
@@ -277,9 +274,9 @@ CubicBspline::Refine(CubicBspline &result)
 	int p2 = ( k + 2 ) % n;
 
 	/* Allocate space for the new points. */
-	new_c[i] = new float[d];
+    new_c[i] = new double[d];
 	if ( i + 1 < new_n )
-	    new_c[i+1] = new float[d];
+        new_c[i+1] = new double[d];
 
 	/* Compute the new points using the refinement rules. */
 	for ( j = 0 ; j < d ; j++ )
@@ -376,17 +373,17 @@ CubicBspline::Refine_Tolerance(CubicBspline &result, const float tolerance)
 
 /* Copy a set fo control points */
 void
-CubicBspline::Copy_Controls(float **c_in)
+CubicBspline::Copy_Controls(double **c_in)
 {
     int i, j;
 
     if ( c_pts )
 	Delete_Controls();
 
-    c_pts = new float*[n];
+    c_pts = new double*[n];
     for ( i = 0 ; i < n ; i++ )
     {
-	c_pts[n] = new float[d];
+    c_pts[n] = new double[d];
 	for ( j = 0 ; j < d ; j++ )
 	    c_pts[n][d] = c_in[n][d];
     }
