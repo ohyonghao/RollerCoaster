@@ -3,13 +3,12 @@
 
 #include <QObject>
 #include <QGLWidget>
-#include <QMatrix4x4>
-#include <QGLShaderProgram>
-#include <QVector>
-#include <QVector3D>
+#include <vector>
 #include <QTimer>
+#include "GLDrawable.h"
 #include "Ground.h"
 #include "Track.h"
+#include <memory>
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
 {
@@ -28,12 +27,9 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         void mousePressEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
     private:
-        QMatrix4x4 pMatrix;
-        QGLShaderProgram shaderProgram;
-        QVector<QVector3D> vertices;
 
-        Ground *ground{nullptr};
-        Track *track{nullptr};
+        std::vector<std::shared_ptr<GLDrawable> > drawables;
+        std::vector<std::shared_ptr<GLDrawable> > animated;
 
         QTimer coasterTimer;
 

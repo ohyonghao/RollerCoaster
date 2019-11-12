@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CubicBspline.cpp \
+    GLDrawable.cpp \
     GLWidget.cpp \
     Ground.cpp \
     Track.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 HEADERS += \
     CubicBspline.h \
+    GLDrawable.h \
     GLWidget.h \
     Ground.h \
     MainWindow.h \

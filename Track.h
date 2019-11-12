@@ -8,10 +8,10 @@
 #ifndef TRAINTRACK_H
 #define TRAINTRACK_H
 
-#include <QOpenGLFunctions>
+#include "GLDrawable.h"
 #include "CubicBspline.h"
 
-class Track : protected QOpenGLFunctions {
+class Track : public GLDrawable {
   private:
     GLubyte 	    track_list;	    // The display list for the track.
     GLubyte 	    train_list;	    // The display list for the train.
@@ -27,14 +27,15 @@ class Track : protected QOpenGLFunctions {
 
   public:
     // Constructor
-    Track(void):QOpenGLFunctions{} { }
+    Track(void):GLDrawable{} { }
 
     // Destructor
-    ~Track(void);
+    ~Track(void) override;
 
-    bool    Initialize(void);	// Gets everything set up for drawing.
-    void    Update(double);	// Updates the location of the train
-    void    Draw(void);		// Draws everything.
+    bool    Initialize() override;	// Gets everything set up for drawing.
+    void    Update(double) override;	// Updates the location of the train
+    void    Draw() override;		// Draws everything.
+    bool    isAnimated() override {return true;}
 };
 
 

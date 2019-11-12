@@ -8,9 +8,9 @@
 #ifndef GROUND_H
 #define GROUND_H
 
-#include <QOpenGLFunctions>
+#include "GLDrawable.h"
 
-class Ground : protected QOpenGLFunctions {
+class Ground : public GLDrawable {
   private:
     GLubyte display_list{0};   // The display list that does all the work.
     GLuint  texture_obj{0};    // The object for the grass texture.
@@ -19,16 +19,16 @@ class Ground : protected QOpenGLFunctions {
   public:
     // Constructor. Can't do initialization here because we are
     // created before the OpenGL context is set up.
-    Ground(void):QOpenGLFunctions{}, texture_obj{} { }
+    Ground(void):GLDrawable{}, texture_obj{} { }
 
     // Destructor. Frees the display lists and texture object.
-    ~Ground(void);
+    ~Ground(void) override;
 
     // Initializer. Creates the display list.
-    bool    Initialize(void);
+    bool    Initialize(void) override;
 
     // Does the drawing.
-    void    Draw(void);
+    void    Draw(void) override;
 };
 
 

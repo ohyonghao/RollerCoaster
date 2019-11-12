@@ -4,6 +4,7 @@
 #include <GL/glu.h>
 #include <QTimer>
 #include <QMouseEvent>
+#include <algorithm>
 
 using namespace std;
 GLWidget::GLWidget(QWidget* parent)
@@ -11,10 +12,20 @@ GLWidget::GLWidget(QWidget* parent)
 {
     connect(&coasterTimer, &QTimer::timeout,this, &GLWidget::updateCoaster);
     setMouseTracking(false); // Only track when button pressed
+
+
+    // Initialize our objects
+    drawables.push_back(make_shared<Ground>());
+    drawables.push_back(make_shared<Track>());
+
+    for(const auto& d: drawables){
+        if( d->isAnimated() )
+            animated.push_back(d);
+    }
 }
 
 GLWidget::~GLWidget(){
-    delete ground;
+
 };
 
 void GLWidget::initializeGL(){
@@ -56,15 +67,8 @@ void GLWidget::initializeGL(){
     glLightfv(GL_LIGHT0, GL_DIFFUSE, vector<float>{1.0f, 1.0f, 1.0f, 1.0f}.data());
     glLightfv(GL_LIGHT0, GL_SPECULAR, vector<float>{0.0f, 0.0f, 0.0f, 1.0f}.data());
 
-    // Initialize our objects
-    if( ground == nullptr )
-        ground = new Ground;
-    ground->Initialize();
-
-    if( track == nullptr )
-        track = new Track;
-    track->Initialize();
-
+    for( auto& d: drawables )
+        d->Initialize();
     coasterTimer.start(10);
 
 }
@@ -82,7 +86,7 @@ void GLWidget::resizeGL(int width, int height){
     // Set up the persepctive transformation.
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    double fov_y = 360.0f / M_PI * atan(static_cast<double>(height) * tan(FOV_X * M_PI / 360.0) / static_cast<double>(width));
+    double fov_y = 360.0 / M_PI * atan(static_cast<double>(height) * tan(FOV_X * M_PI / 360.0) / static_cast<double>(width));
     gluPerspective(fov_y,
                    static_cast<double>(width) / static_cast<double>(height), 1.0, 1000.0);
 
@@ -116,13 +120,15 @@ void GLWidget::paintGL(){
 
 
     // Draw Objects
-    ground->Draw();
-    track->Draw();
+    for( auto& d: drawables)
+        d->Draw();
 }
 
 void GLWidget::updateCoaster(){
     // Animate the train.
-    track->Update(coasterTimer.interval()/1000.0);
+    auto dt = coasterTimer.interval()/1000.0;
+    for( auto &a: animated)
+        a->Update(dt);
     updateGL();
 }
 
