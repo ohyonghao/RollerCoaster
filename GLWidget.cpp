@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <QMouseEvent>
 #include <algorithm>
+#include "Building.h"
+#include "Ground.h"
+#include "Track.h"
 
 using namespace std;
 GLWidget::GLWidget(QWidget* parent)
@@ -17,6 +20,7 @@ GLWidget::GLWidget(QWidget* parent)
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
     drawables.push_back(make_shared<Track>());
+    drawables.push_back(make_shared<Building>());
 
     for(const auto& d: drawables){
         if( d->isAnimated() )

@@ -6,8 +6,6 @@
 #include <vector>
 #include <QTimer>
 #include "GLDrawable.h"
-#include "Ground.h"
-#include "Track.h"
 #include <memory>
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
