@@ -134,6 +134,12 @@ void GLWidget::updateCoaster(){
 
 void GLWidget::mousePressEvent(QMouseEvent *event){
     downPos = event->pos();
+
+    phi_down = phi;
+    theta_down = theta;
+    dist_down = dist;
+    x_at_down = x_at;
+    y_at_down = y_at;
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event){
