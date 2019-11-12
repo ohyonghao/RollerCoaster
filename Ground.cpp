@@ -13,7 +13,7 @@
 
 using namespace std;
 // Destructor
-Ground::~Ground(void)
+Ground::~Ground()
 {
     if ( initialized )
     {

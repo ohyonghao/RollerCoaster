@@ -19,10 +19,10 @@ class Ground : public GLDrawable {
   public:
     // Constructor. Can't do initialization here because we are
     // created before the OpenGL context is set up.
-    Ground(void):GLDrawable{}, texture_obj{} { }
+    Ground():GLDrawable{}, texture_obj{} { }
 
     // Destructor. Frees the display lists and texture object.
-    ~Ground(void) override;
+    ~Ground() override;
 
     // Initializer. Creates the display list.
     bool    Initialize(void) override;

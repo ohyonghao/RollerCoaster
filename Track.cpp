@@ -37,7 +37,7 @@ Normalize_3(double v[3])
 
 
 // Destructor
-Track::~Track(void)
+Track::~Track()
 {
     if ( initialized )
     {
