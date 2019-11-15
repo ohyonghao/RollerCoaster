@@ -9,6 +9,8 @@
 #include "libtarga.h"
 #include <GL/glu.h>
 #include <QOpenGLFunctions>
+#include <QImage>
+#include <QOpenGLTexture>
 #include <iostream>
 
 using namespace std;
@@ -17,8 +19,8 @@ Ground::~Ground()
 {
     if ( initialized )
     {
-	glDeleteLists(display_list, 1);
-	glDeleteTextures(1, &texture_obj);
+    glDeleteLists(display_list, 1);
+    delete texture;
     }
 }
 
@@ -28,43 +30,19 @@ Ground::~Ground()
 bool
 Ground::Initialize(void)
 {
-    ubyte   *image_data;
-    int	    image_height, image_width;
 
-    // Load the image for the texture. The texture file has to be in
-    // a place where it will be found.
-    if ( ! ( image_data = (ubyte*)tga_load("grass.tga", &image_width,
-					   &image_height, TGA_TRUECOLOR_24) ) )
-    {
-        cout << "Ground::Initialize: Couldn't load grass.tga\n";
+    QImage image(":/grass.tga");
+    if(image.isNull()){
+        cout << "Failed to load" << endl;
         return false;
     }
-
     initializeOpenGLFunctions();
     // This creates a texture object and binds it, so the next few operations
     // apply to this texture.
-    glGenTextures(1, &texture_obj);
-    glBindTexture(GL_TEXTURE_2D, texture_obj);
 
-    // This sets a parameter for how the texture is loaded and interpreted.
-    // basically, it says that the data is packed tightly in the image array.
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    // This sets up the texture with high quality filtering. First it builds
-    // mipmaps from the image data, then it sets the filtering parameters
-    // and the wrapping parameters. We want the grass to be repeated over the
-    // ground.
-    gluBuild2DMipmaps(GL_TEXTURE_2D,3, image_width, image_height, 
-		      GL_RGB, GL_UNSIGNED_BYTE, image_data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-		    GL_NEAREST_MIPMAP_LINEAR);
-
-    // This says what to do with the texture. Modulate will multiply the
-    // texture by the underlying color.
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); 
+    texture = new QOpenGLTexture(image.mirrored());
+    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
+    texture->setMagnificationFilter(QOpenGLTexture::Linear);
 
     // Now do the geometry. Create the display list.
     display_list = glGenLists(1);
@@ -76,8 +54,8 @@ Ground::Initialize(void)
 	glNormal3f(0.0, 0.0, 1.0);
 
 	// Turn on texturing and bind the grass texture.
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture_obj);
+    glEnable(GL_TEXTURE_2D);
+    texture->bind();
 
 	// Draw the ground as a quadrilateral, specifying texture coordinates.
 	glBegin(GL_QUADS);
