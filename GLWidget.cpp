@@ -189,5 +189,4 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
     default:
         return; // only handle mouse button events
     }
-    updateGL();
 }
