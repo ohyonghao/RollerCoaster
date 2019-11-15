@@ -16,7 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    Building.cpp \
+    Cube.cpp \
     CubicBspline.cpp \
     GLDrawable.cpp \
     GLWidget.cpp \
@@ -27,7 +27,7 @@ SOURCES += \
     MainWindow.cpp
 
 HEADERS += \
-    Building.h \
+    Cube.h \
     CubicBspline.h \
     GLDrawable.h \
     GLWidget.h \

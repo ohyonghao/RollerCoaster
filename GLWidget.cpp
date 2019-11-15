@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QMouseEvent>
 #include <algorithm>
-#include "Building.h"
+#include "Cube.h"
 #include "Ground.h"
 #include "Track.h"
 
@@ -20,7 +20,7 @@ GLWidget::GLWidget(QWidget* parent)
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
     drawables.push_back(make_shared<Track>());
-    drawables.push_back(make_shared<Building>());
+    drawables.push_back(make_shared<Cube>(10,QImage(":/brick_wall.jpg")));
 
     for(const auto& d: drawables){
         if( d->isAnimated() )
