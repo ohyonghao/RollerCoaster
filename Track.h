@@ -27,10 +27,10 @@ class Track : public GLDrawable {
 
   public:
     // Constructor
-    Track(void):GLDrawable{} { }
+    Track():GLDrawable{} { }
 
     // Destructor
-    ~Track(void) override;
+    ~Track() override;
 
     bool    Initialize() override;	// Gets everything set up for drawing.
     void    Update(double) override;	// Updates the location of the train
