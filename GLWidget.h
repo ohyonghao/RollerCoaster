@@ -7,6 +7,7 @@
 #include <QTimer>
 #include "GLDrawable.h"
 #include <memory>
+#include "ViewPort.h"
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
 {
@@ -29,14 +30,10 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         std::vector<std::shared_ptr<GLDrawable> > drawables;
         std::vector<std::shared_ptr<GLDrawable> > animated;
 
-        QTimer coasterTimer;
+        std::vector<ViewPort> views;
+        ViewPort *currentView;
 
-        // Camera
-        double phi = 45.0;
-        double theta = 0.0;
-        double dist = 100.0;
-        double x_at = 0.0;
-        double y_at = 0.0;
+        QTimer coasterTimer;
 
         // Mouse
         double  phi_down;   // The view inclination angle when the mouse

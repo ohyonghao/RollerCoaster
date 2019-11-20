@@ -26,6 +26,12 @@ GLWidget::GLWidget(QWidget* parent)
         if( d->isAnimated() )
             animated.push_back(d);
     }
+
+    // Idea for later, gldrawable attachview(Viewport*)
+
+    // Add the default view
+    views.push_back(ViewPort(45.0,0.0,100.0,0.0,0.0));
+    currentView = &views[0];
 }
 
 GLWidget::~GLWidget(){
@@ -71,8 +77,14 @@ void GLWidget::initializeGL(){
     glLightfv(GL_LIGHT0, GL_DIFFUSE, vector<float>{1.0f, 1.0f, 1.0f, 1.0f}.data());
     glLightfv(GL_LIGHT0, GL_SPECULAR, vector<float>{0.0f, 0.0f, 0.0f, 1.0f}.data());
 
+    // Initialize drawables
     for( auto& d: drawables )
         d->Initialize();
+
+    // Initialize views
+    for( auto& v: views ){
+        v.Initialize();
+    }
     coasterTimer.start(10);
 
 }
@@ -102,19 +114,7 @@ void GLWidget::paintGL(){
     //initializeGL();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    vector<double> eye(3);
-    // ############ Camera ##############
-    // Set up the viewing transformation. The viewer is at a distance
-    // dist from (x_at, y_ay, 2.0) in the direction (theta, phi) defined
-    // by two angles. They are looking at (x_at, y_ay, 2.0) and z is up.
-    // Initial viewing parameters.
-
-    eye[0] = x_at + dist * cos(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
-    eye[1] = y_at + dist * sin(theta * M_PI / 180.0) * cos(phi * M_PI / 180.0);
-    eye[2] = 2.0 + dist * sin(phi * M_PI / 180.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(eye[0], eye[1], eye[2], x_at, y_at, 2.0, 0.0, 0.0, 1.0);
+    currentView->LookAtView();
 
     // ########### Light ###############
     // Position the light source. This has to happen after the viewing
@@ -139,11 +139,11 @@ void GLWidget::updateCoaster(){
 void GLWidget::mousePressEvent(QMouseEvent *event){
     downPos = event->pos();
 
-    phi_down = phi;
-    theta_down = theta;
-    dist_down = dist;
-    x_at_down = x_at;
-    y_at_down = y_at;
+    phi_down = currentView->phi();
+    theta_down = currentView->theta();
+    dist_down = currentView->dist();
+    x_at_down = currentView->x();
+    y_at_down = currentView->y();
 }
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event){
@@ -154,22 +154,22 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
     {
     case Qt::LeftButton:
         // Left button changes the direction the viewer is looking from.
-        theta = theta_down + 360.0 * dx;
-        while ( theta >= 360.0 )
-            theta -= 360.0;
-        while ( theta < 0.0 )
-            theta += 360.0;
-        phi = phi_down + 90.0 * dy;
-        if ( phi > 89.0 )
-            phi = 89.0;
-        if ( phi < -5.0 )
-            phi = -5.0;
+        currentView->theta() = theta_down + 360.0 * dx;
+        while ( currentView->theta() >= 360.0 )
+            currentView->theta() -= 360.0;
+        while ( currentView->theta() < 0.0 )
+            currentView->theta() += 360.0;
+        currentView->phi() = phi_down + 90.0 * dy;
+        if ( currentView->phi() > 89.0 )
+            currentView->phi() = 89.0;
+        if ( currentView->phi() < -5.0 )
+            currentView->phi() = -5.0;
         break;
     case Qt::MiddleButton:
         // Middle button moves the viewer in or out.
-        dist = dist_down - ( 0.5 * dist_down * dy );
-        if ( dist < 1.0 )
-            dist = 1.0;
+        currentView->dist() = dist_down - ( 0.5 * dist_down * dy );
+        if ( currentView->dist() < 1.0 )
+            currentView->dist() = 1.0;
         break;
     case Qt::RightButton: {
         // Right mouse button moves the look-at point around, so the world
@@ -177,13 +177,13 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
         double	x_axis[2];
         double	y_axis[2];
 
-        x_axis[0] = -sin(theta * M_PI / 180.0);
-        x_axis[1] = cos(theta * M_PI / 180.0);
+        x_axis[0] = -sin(currentView->theta() * M_PI / 180.0);
+        x_axis[1] = cos(currentView->theta() * M_PI / 180.0);
         y_axis[0] = x_axis[1];
         y_axis[1] = -x_axis[0];
 
-        x_at = x_at_down + 100.0 * ( x_axis[0] * dx + y_axis[0] * dy );
-        y_at = y_at_down + 100.0 * ( x_axis[1] * dx + y_axis[1] * dy );
+        currentView->x() = x_at_down + 100.0 * ( x_axis[0] * dx + y_axis[0] * dy );
+        currentView->y() = y_at_down + 100.0 * ( x_axis[1] * dx + y_axis[1] * dy );
         }
         break;
     default:
