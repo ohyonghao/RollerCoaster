@@ -22,6 +22,7 @@ SOURCES += \
     GLWidget.cpp \
     Ground.cpp \
     Track.cpp \
+    ViewPort.cpp \
     libtarga.c \
     main.cpp \
     MainWindow.cpp
@@ -34,6 +35,7 @@ HEADERS += \
     Ground.h \
     MainWindow.h \
     Track.h \
+    ViewPort.h \
     libtarga.h
 
 FORMS +=
