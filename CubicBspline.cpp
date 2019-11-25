@@ -170,7 +170,7 @@ CubicBspline::Evaluate_Point(const double t, double *pt)
     float   basis[4];
     int     i, j;
 
-    posn = (int)floor(t);
+    posn = static_cast<int>(floor(t));
 
 //    if ( posn > n - 4 && ! loop )
 //    {
@@ -191,7 +191,7 @@ CubicBspline::Evaluate_Point(const double t, double *pt)
     /* Sum up the control points times the basis functions for each dimension.
     ** j loops over dimension, i loops over control point. */
     for ( j = 0 ; j < d ; j++ )
-	pt[j] = 0.0f;
+    pt[j] = 0.0;
     for ( i = 0 ; i < 4 ; i++ )
     {
 	int index = ( posn + i ) % n;
@@ -200,7 +200,7 @@ CubicBspline::Evaluate_Point(const double t, double *pt)
     }
     /* Divide through the constant factor. */
     for ( j = 0 ; j < d ; j++ )
-	pt[j] /= 6.0f;
+    pt[j] /= 6.0;
 }
 
 
@@ -236,15 +236,15 @@ CubicBspline::Evaluate_Derivative(const double t, double *deriv)
 
     /* Now it's just like evaluating a point. */
     for ( j = 0 ; j < d ; j++ )
-    deriv[j] = 0.0;
+        deriv[j] = 0.0;
     for ( i = 0 ; i < 4 ; i++ )
     {
-	int index = ( posn + i ) % n;
-	for ( j = 0 ; j < d ; j++ )
-	    deriv[j] += c_pts[index][j] * basis[i];
+        int index = ( posn + i ) % n;
+        for ( j = 0 ; j < d ; j++ )
+            deriv[j] += c_pts[index][j] * basis[i];
     }
     for ( j = 0 ; j < d ; j++ )
-    deriv[j] /= 6.0;
+        deriv[j] /= 6.0;
 }
 
 

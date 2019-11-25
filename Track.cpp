@@ -9,7 +9,9 @@
 #include <cmath>
 #include <GL/glu.h>
 #include <QOpenGLFunctions>
+#include <iostream>
 
+using namespace std;
 
 // The control points for the track spline.
 const int   Track::TRACK_NUM_CONTROLS = 4;
@@ -130,6 +132,8 @@ Track::Initialize(void)
 
     initialized = true;
 
+    if( _view != nullptr )
+        attachView(_view);
     return true;
 }
 
@@ -143,7 +147,7 @@ Track::Draw(void)
     double  angle;
 
     if ( ! initialized )
-	return;
+        return;
 
     glPushMatrix();
 
@@ -156,13 +160,13 @@ Track::Draw(void)
     track->Evaluate_Point(posn_on_track, posn);
 
     // Translate the train to the point
-    glTranslatef(posn[0], posn[1], posn[2]);
+    glTranslated(posn[0], posn[1], posn[2]);
 
     // ...and what it's orientation is
     track->Evaluate_Derivative(posn_on_track, tangent);
     Normalize_3(tangent);
 
-    // Rotate it to poitn along the track, but stay horizontal
+    // Rotate it to point along the track, but stay horizontal
     angle = atan2(tangent[1], tangent[0]) * 180.0 / M_PI;
     glRotatef((float)angle, 0.0f, 0.0f, 1.0f);
 
@@ -175,6 +179,7 @@ Track::Draw(void)
 
     glPopMatrix();
     glPopMatrix();
+
 }
 
 
@@ -187,7 +192,7 @@ Track::Update(double dt)
     double  parametric_speed;
 
     if ( ! initialized )
-	return;
+        return;
 
     // First we move the train along the track with its current speed.
 
@@ -197,7 +202,7 @@ Track::Update(double dt)
     // Get its length.
     length = sqrt(deriv[0]*deriv[0] + deriv[1]*deriv[1] + deriv[2]*deriv[2]);
     if ( length == 0.0 )
-	return;
+        return;
 
     // The parametric speed is the world train speed divided by the length
     // of the tangent vector.
@@ -215,9 +220,53 @@ Track::Update(double dt)
     // The total energy = z * gravity + 1/2 speed * speed, assuming unit mass
     track->Evaluate_Point(posn_on_track, point);
     if ( TRAIN_ENERGY - 9.81 * point[2] < 0.0 )
-	speed = 0.0;
+        speed = 0.0;
     else
-	speed = (float)sqrt(2.0 * ( TRAIN_ENERGY - 9.81 * point[2] ));
+        speed = (float)sqrt(2.0 * ( TRAIN_ENERGY - 9.81 * point[2] ));
+
+    //updateView( deriv );
 }
 
+void Track::updateView(double point[]){
+    if( _view == nullptr) return;
 
+    // (x,y,z?)
+    double	x_axis[2];
+    double	y_axis[2];
+
+    x_axis[0] = -sin(_view->theta() * M_PI / 180.0);
+    x_axis[1] = cos(_view->theta() * M_PI / 180.0);
+    y_axis[0] = x_axis[1];
+    y_axis[1] = -x_axis[0];
+    _view->x() = 100.0*(x_axis[0]*point[0] + y_axis[0]*point[1]);
+    _view->y() = 100.0*(x_axis[1]*point[0] + y_axis[1]*point[1]);
+    //_view->phi() = point[2];
+
+    // We have to look at how to calculate this value to use in our ViewPort.
+    // We may want to change how we are storing things.
+    _view->dist() += _view->dist()*point[2];
+
+    cout << "(x,y,dist)=>(" << _view->x() << ", " << _view->y() << ", " << _view->dist() << ")" << endl;
+
+    // Almost right...
+//    _view->x() = posn[0];
+//    _view->y() = posn[1];
+//    _view->dist() = posn[2];
+
+    //_view->theta() = atan2(tangent[1], tangent[0])*180.0/M_PI;
+    //_view->phi() = asin(-tangent[2]) * 180.0/M_PI;
+}
+
+void Track::attachView(ViewPort *view){
+     _view = view;
+     // Now setup the initial points
+
+     if( initialized && _view != nullptr ){
+         double posn[3];
+         track->Evaluate_Point(posn_on_track, posn);
+
+         _view->x() = posn[0];
+         _view->y() = posn[1];
+         _view->dist() = posn[2];
+     }
+}
