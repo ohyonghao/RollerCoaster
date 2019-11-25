@@ -25,6 +25,7 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         void paintGL() override;
         void mousePressEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
+        void keyPressEvent(QKeyEvent *event) override;
     private:
 
         std::vector<std::shared_ptr<GLDrawable> > drawables;

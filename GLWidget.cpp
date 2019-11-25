@@ -8,7 +8,8 @@
 #include "Cube.h"
 #include "Ground.h"
 #include "Track.h"
-
+#include <iostream>
+#include <QMatrix4x4>
 using namespace std;
 GLWidget::GLWidget(QWidget* parent)
     : QGLWidget{QGLFormat(/* Additional format options*/),parent}
@@ -17,9 +18,10 @@ GLWidget::GLWidget(QWidget* parent)
     setMouseTracking(false); // Only track when button pressed
 
 
+    auto track = make_shared<Track>();
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
-    drawables.push_back(make_shared<Track>());
+    drawables.push_back(track);
     drawables.push_back(make_shared<Cube>(10,QImage(":/brick_wall.jpg")));
 
     for(const auto& d: drawables){
@@ -31,6 +33,9 @@ GLWidget::GLWidget(QWidget* parent)
 
     // Add the default view
     views.push_back(ViewPort(45.0,0.0,100.0,0.0,0.0));
+    views.push_back(ViewPort());
+
+    track->attachView(&views[1]);
     currentView = &views[0];
 }
 
@@ -188,5 +193,92 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
         break;
     default:
         return; // only handle mouse button events
+    }
+}
+
+void GLWidget::keyPressEvent(QKeyEvent *event){
+    cout << "key pressed: " << static_cast<char>(event->key()) << endl;
+    switch(event->key()){
+    case 'O':
+    {
+        auto dir{currentView->eye() - currentView->lookAt()};
+        currentView->moveEyeBy(dir);
+        currentView->moveLookAtBy(dir);
+        break;
+    }
+    case ',':
+    {
+        auto dir{currentView->lookAt() - currentView->eye()};
+        currentView->moveEyeBy(dir);
+        currentView->moveLookAtBy(dir);
+        break;
+    }
+    case 'A':
+    {
+        auto dir{currentView->eye() - currentView->lookAt()};
+        dir = QVector3D::crossProduct(dir, currentView->up());
+        currentView->moveEyeBy(dir);
+        currentView->moveLookAtBy(dir);
+        break;
+    }
+    case 'E':
+    {
+        auto dir{currentView->lookAt() - currentView->eye()};
+        dir = QVector3D::crossProduct(dir, currentView->up());
+        currentView->moveEyeBy(dir);
+        currentView->moveLookAtBy(dir);
+        break;
+    }
+    case '\'':
+    {
+        // Translate to origin
+        auto dir{currentView->lookAt() - currentView->eye()};
+        dir.normalize();
+        QMatrix4x4 matrix;
+        matrix.rotate(-12.0, QVector3D::crossProduct(dir, currentView->up()) );
+        currentView->setEye(matrix*currentView->eye());
+        currentView->setLookAt(matrix*currentView->lookAt());
+        break;
+    }
+    case '.':
+    {
+        // Translate to origin
+        auto dir{currentView->lookAt() - currentView->eye()};
+        dir.normalize();
+        QMatrix4x4 matrix;
+        matrix.rotate(12.0, QVector3D::crossProduct(dir, currentView->up()) );
+        currentView->setEye(matrix*currentView->eye());
+        currentView->setLookAt(matrix*currentView->lookAt());
+        break;
+    }
+    case ';':
+    {
+        // Translate to origin
+        auto dir{currentView->lookAt() - currentView->eye()};
+        dir /=2.0;
+        QMatrix4x4 matrix;
+        matrix.translate(-dir);
+        matrix.rotate(-12.0, currentView->up() );
+        matrix.translate(dir);
+        currentView->setEye(matrix*currentView->eye());
+        currentView->setLookAt(matrix*currentView->lookAt());
+        break;
+    }
+    case 'J':
+    {
+        // Translate to origin
+        auto dir{currentView->lookAt() - currentView->eye()};
+        dir /=2.0;
+        QMatrix4x4 matrix;
+        matrix.translate(-dir);
+        matrix.rotate(12.0, currentView->up() );
+        matrix.translate(dir);
+        currentView->setEye(matrix*currentView->eye());
+        currentView->setLookAt(matrix*currentView->lookAt());
+        break;
+    }
+    default:
+        QGLWidget::keyPressEvent(event);
+        return;
     }
 }

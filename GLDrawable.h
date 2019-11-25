@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QOpenGLFunctions>
-
+#include "ViewPort.h"
 class GLDrawable : protected QOpenGLFunctions
 {
 public:
@@ -14,6 +14,7 @@ public:
     virtual bool Initialize()=0;
     virtual void Update(double){}
     virtual bool isAnimated(){return false;}
+    virtual void attachView(ViewPort*){}
 };
 
 #endif // GLDRAWABLE_H

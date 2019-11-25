@@ -10,6 +10,7 @@
 
 #include "GLDrawable.h"
 #include "CubicBspline.h"
+#include "ViewPort.h"
 
 class Track : public GLDrawable {
   private:
@@ -25,6 +26,10 @@ class Track : public GLDrawable {
     static const float 	TRACK_CONTROLS[][3];
     static const float 	TRAIN_ENERGY;
 
+    ViewPort *_view{nullptr};
+
+    void updateView(double[]);
+
   public:
     // Constructor
     Track():GLDrawable{} { }
@@ -36,6 +41,7 @@ class Track : public GLDrawable {
     void    Update(double) override;	// Updates the location of the train
     void    Draw() override;		// Draws everything.
     bool    isAnimated() override {return true;}
+    void    attachView(ViewPort* view) override;
 };
 
 
