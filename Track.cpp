@@ -213,7 +213,7 @@ Track::Update(double dt)
 
     // If we've just gone around the track, reset back to the start.
     if ( posn_on_track > track->N() )
-	posn_on_track -= track->N();
+        posn_on_track -= track->N();
 
     // As the second step, we use conservation of energy to set the speed
     // for the next time.
@@ -224,37 +224,25 @@ Track::Update(double dt)
     else
         speed = (float)sqrt(2.0 * ( TRAIN_ENERGY - 9.81 * point[2] ));
 
-    //updateView( deriv );
+    updateView( parametric_speed*dt*50 );
 }
 
-void Track::updateView(double point[]){
+void Track::updateView(double dist ){
     if( _view == nullptr) return;
 
-    // (x,y,z?)
-    double	x_axis[2];
-    double	y_axis[2];
-
-    x_axis[0] = -sin(_view->theta() * M_PI / 180.0);
-    x_axis[1] = cos(_view->theta() * M_PI / 180.0);
-    y_axis[0] = x_axis[1];
-    y_axis[1] = -x_axis[0];
-    _view->x() = 100.0*(x_axis[0]*point[0] + y_axis[0]*point[1]);
-    _view->y() = 100.0*(x_axis[1]*point[0] + y_axis[1]*point[1]);
-    //_view->phi() = point[2];
-
-    // We have to look at how to calculate this value to use in our ViewPort.
-    // We may want to change how we are storing things.
-    _view->dist() += _view->dist()*point[2];
-
-    cout << "(x,y,dist)=>(" << _view->x() << ", " << _view->y() << ", " << _view->dist() << ")" << endl;
-
-    // Almost right...
-//    _view->x() = posn[0];
-//    _view->y() = posn[1];
-//    _view->dist() = posn[2];
-
-    //_view->theta() = atan2(tangent[1], tangent[0])*180.0/M_PI;
-    //_view->phi() = asin(-tangent[2]) * 180.0/M_PI;
+    double pnt[3];
+    track->Evaluate_Point(posn_on_track, pnt);
+    QVector3D point;
+    point.setX(pnt[0]);
+    point.setY(pnt[1]);
+    point.setZ(pnt[2]+1);
+    _view->setEye(point);
+    track->Evaluate_Point(posn_on_track+dist > track->N() ? posn_on_track+dist - track->N() : posn_on_track+dist, pnt);
+    point.setX(pnt[0]);
+    point.setY(pnt[1]);
+    point.setZ(pnt[2]-1);
+    _view->setLookAt(point);
+    _view->moveEyeBy((_view->eye() - _view->lookAt()).normalized()*(5.0));
 }
 
 void Track::attachView(ViewPort *view){

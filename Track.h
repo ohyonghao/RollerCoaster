@@ -28,7 +28,7 @@ class Track : public GLDrawable {
 
     ViewPort *_view{nullptr};
 
-    void updateView(double[]);
+    void updateView(double dt);
 
   public:
     // Constructor

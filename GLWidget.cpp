@@ -36,7 +36,7 @@ GLWidget::GLWidget(QWidget* parent)
     views.push_back(ViewPort());
 
     track->attachView(&views[1]);
-    currentView = &views[0];
+    currentView = &views[1];
 }
 
 GLWidget::~GLWidget(){
@@ -155,6 +155,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
     double dx = (downPos.x() - event->x())/static_cast<double>(width());
     double dy = (downPos.y() - event->y())/static_cast<double>(height());
 
+    QVector3D eye;
+    QVector3D at;
+    double dist = 2.0;
     switch ( event->buttons() )
     {
     case Qt::LeftButton:
@@ -187,13 +190,20 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
         y_axis[0] = x_axis[1];
         y_axis[1] = -x_axis[0];
 
-        currentView->x() = x_at_down + 100.0 * ( x_axis[0] * dx + y_axis[0] * dy );
-        currentView->y() = y_at_down + 100.0 * ( x_axis[1] * dx + y_axis[1] * dy );
+        at.setX( x_at_down + 100.0 * ( x_axis[0] * dx + y_axis[0] * dy ) );
+        at.setY( y_at_down + 100.0 * ( x_axis[1] * dx + y_axis[1] * dy ) );
+        at.setZ(2.0);
+        currentView->setLookAt(at);
         }
         break;
     default:
         return; // only handle mouse button events
     }
+    auto lookat = currentView->lookAt();
+    eye.setX( lookat.x() + currentView->dist() * cos(currentView->theta() * M_PI / 180.0) * cos(currentView->phi() * M_PI / 180.0) );
+    eye.setY( lookat.y() + currentView->dist() * sin(currentView->theta() * M_PI / 180.0) * cos(currentView->phi() * M_PI / 180.0) );
+    eye.setZ( lookat.z() + currentView->dist() * sin(currentView->phi() * M_PI / 180.0) );
+    currentView->setEye(eye);
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event){
@@ -277,6 +287,12 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         currentView->setLookAt(matrix*currentView->lookAt());
         break;
     }
+    case '1':
+        currentView = &views[0];
+        break;
+    case '2':
+        currentView = &views[1];
+        break;
     default:
         QGLWidget::keyPressEvent(event);
         return;
