@@ -17,7 +17,6 @@ GLWidget::GLWidget(QWidget* parent)
     connect(&coasterTimer, &QTimer::timeout,this, &GLWidget::updateCoaster);
     setMouseTracking(false); // Only track when button pressed
 
-
     auto track = make_shared<Track>();
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
@@ -212,6 +211,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
     case 'O':
     {
         auto dir{currentView->eye() - currentView->lookAt()};
+        dir.normalize();
         currentView->moveEyeBy(dir);
         currentView->moveLookAtBy(dir);
         break;
@@ -219,6 +219,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
     case ',':
     {
         auto dir{currentView->lookAt() - currentView->eye()};
+        dir.normalize();
         currentView->moveEyeBy(dir);
         currentView->moveLookAtBy(dir);
         break;
@@ -227,6 +228,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
     {
         auto dir{currentView->eye() - currentView->lookAt()};
         dir = QVector3D::crossProduct(dir, currentView->up());
+        dir.normalize();
         currentView->moveEyeBy(dir);
         currentView->moveLookAtBy(dir);
         break;
@@ -235,6 +237,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
     {
         auto dir{currentView->lookAt() - currentView->eye()};
         dir = QVector3D::crossProduct(dir, currentView->up());
+        dir.normalize();
         currentView->moveEyeBy(dir);
         currentView->moveLookAtBy(dir);
         break;
