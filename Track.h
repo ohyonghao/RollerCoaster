@@ -11,6 +11,7 @@
 #include "GLDrawable.h"
 #include "CubicBspline.h"
 #include "ViewPort.h"
+#include <QVector3D>
 
 class Track : public GLDrawable {
   private:
@@ -21,6 +22,8 @@ class Track : public GLDrawable {
     float	    posn_on_track{0.0f};  // The train's parametric position on the
 				    // track.
     float	    speed{0.0f};	    // The train's speed, in world coordinates
+
+    QVector3D _pos{0,0,0};
 
     static const int	TRACK_NUM_CONTROLS;	// Constants about the track.
     static const float 	TRACK_CONTROLS[][3];
@@ -42,6 +45,7 @@ class Track : public GLDrawable {
     void    Draw() override;		// Draws everything.
     bool    isAnimated() override {return true;}
     void    attachView(ViewPort* view) override;
+    void setPosition(const QVector3D& pos) override {_pos = pos;}
 };
 
 

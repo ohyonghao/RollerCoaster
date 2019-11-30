@@ -10,8 +10,8 @@
 class Cube : public GLDrawable
 {
 public:
-    Cube(uint32_t size, const QVector3D& pos={0.0,0.0,0.0}, const QColor& color={0,0,0});
-    Cube(uint32_t size, const QImage& texture, const QVector3D& pos={0.0,0.0,0.0});
+    Cube(double size, const QVector3D& pos={0.0,0.0,0.0}, const QColor& color={0,0,0});
+    Cube(double size, const QImage& texture, const QVector3D& pos={0.0,0.0,0.0});
     ~Cube() override{}
 
 
@@ -22,12 +22,13 @@ public:
     void    Draw(void) override;
 
     void setTexture(const QImage& );
+    void setPosition(const QVector3D& pos) override {_pos = pos;}
 
 private:
     void setTexture();
-    uint32_t _size;
-    QVector3D _pos;
-    QColor _color;
+    double _size{1.0};
+    QVector3D _pos{0.0,0.0,0.0};
+    QColor _color{Qt::black};
 
     GLuint Cube_list;  // The display list for the Cube.
 

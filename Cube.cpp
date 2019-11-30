@@ -2,14 +2,14 @@
 #include "GLDrawable.h"
 #include <GL/glu.h>
 
-Cube::Cube(uint32_t size, const QVector3D &pos, const QColor &color )
+Cube::Cube(double size, const QVector3D &pos, const QColor &color )
     : GLDrawable{}
     , _size{size}
     , _pos{pos}
     , _color{color}
 {
 }
-Cube::Cube(uint32_t size, const QImage& image, const QVector3D &pos )
+Cube::Cube(double size, const QImage& image, const QVector3D &pos )
     : GLDrawable{}
     , _size{size}
     , _pos{pos}
@@ -46,7 +46,7 @@ bool Cube::Initialize(){
     // Load texture
     setTexture();
 
-    float s = _size;
+    float s = static_cast<float>(_size);
     if( Cube_list != 0 ){
         glDeleteLists(Cube_list,1);
         Cube_list = 0;

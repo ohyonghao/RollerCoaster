@@ -10,6 +10,7 @@
 
 #include "GLDrawable.h"
 #include <QOpenGLTexture>
+#include <QVector3D>
 
 class Ground : public GLDrawable {
   private:
@@ -17,6 +18,7 @@ class Ground : public GLDrawable {
     GLuint  texture_obj{0};    // The object for the grass texture.
     bool    initialized{false};    // Whether or not we have been initialised.
     QOpenGLTexture* texture;
+    QVector3D _pos{0,0,0};
 
   public:
     // Constructor. Can't do initialization here because we are
@@ -31,6 +33,9 @@ class Ground : public GLDrawable {
 
     // Does the drawing.
     void    Draw(void) override;
+
+    // Translate
+    void setPosition(const QVector3D& pos) override {_pos = pos;}
 };
 
 

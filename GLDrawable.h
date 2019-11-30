@@ -12,6 +12,7 @@ public:
 
     virtual void Draw()=0;
     virtual bool Initialize()=0;
+    virtual void setPosition(const QVector3D&)=0;
     virtual void Update(double){}
     virtual bool isAnimated(){return false;}
     virtual void attachView(ViewPort*){}
