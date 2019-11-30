@@ -3,10 +3,12 @@
 
 #include <QObject>
 #include <QGLWidget>
-#include <vector>
 #include <QTimer>
-#include "GLDrawable.h"
+
+#include <vector>
 #include <memory>
+
+#include "GLDrawable.h"
 #include "ViewPort.h"
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
@@ -27,6 +29,7 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent *event) override;
     private:
+        void createForest();
 
         std::vector<std::shared_ptr<GLDrawable> > drawables;
         std::vector<std::shared_ptr<GLDrawable> > animated;
@@ -35,6 +38,10 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         ViewPort *currentView;
 
         QTimer coasterTimer;
+
+        // Plane Size
+        uint32_t size_x{50};
+        uint32_t size_y{50};
 
         // Mouse
         double  phi_down;   // The view inclination angle when the mouse
