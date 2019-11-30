@@ -25,7 +25,6 @@ bool Tree::Initialize(){
 void Tree::Draw(){
     glPushMatrix();
     glTranslatef(_pos.x(), _pos.y(), _pos.z());
-
     trunk.Draw();
     glTranslatef(0, 0, _pos.z()+2.0*_size);
     glRotatef(180, 0,1,0);

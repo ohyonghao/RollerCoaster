@@ -9,7 +9,7 @@
 #include "Ground.h"
 #include "Cylinder.h"
 #include "Cone.h"
-#include "Tree.h"
+#include "Forest.h"
 #include "Track.h"
 #include <iostream>
 #include <QMatrix4x4>
@@ -23,12 +23,16 @@ GLWidget::GLWidget(QWidget* parent)
     auto track = make_shared<Track>();
     auto building = make_shared<Cube>(10,QImage(":/brick_wall.jpg"));
     auto cylinder = make_shared<Cylinder>(0.5,30);
-    createForest();
+    auto forest = make_shared<Forest>(size_x/2, 10);
+    auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
+
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
     drawables.push_back(track);
     drawables.push_back(building);
     drawables.push_back(cylinder);
+    drawables.push_back(forest);
+    drawables.push_back(smallforest);
 
     for(const auto& d: drawables){
         if( d->isAnimated() )
@@ -46,22 +50,13 @@ GLWidget::GLWidget(QWidget* parent)
 
     building->setPosition({30,30,0});
     cylinder->setPosition({-30,-30,0});
+    forest->setPosition({0,-40,0});
+    smallforest->setPosition({-4,-36,0});
 }
 
 GLWidget::~GLWidget(){
 }
 
-void GLWidget::createForest(){
-
-    vector<shared_ptr<Tree> > forest;
-    for(int i = 0; i < size_x; i+=8 ){
-        float x = i;
-        auto y = size_y - 2.0f;
-        auto tree = make_shared<Tree>(6);
-        tree->setPosition({x,y,0});
-        drawables.push_back(tree);
-    }
-}
 
 void GLWidget::initializeGL(){
     // Clear to skyblue

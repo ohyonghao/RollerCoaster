@@ -29,7 +29,6 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         void mouseMoveEvent(QMouseEvent *event) override;
         void keyPressEvent(QKeyEvent *event) override;
     private:
-        void createForest();
 
         std::vector<std::shared_ptr<GLDrawable> > drawables;
         std::vector<std::shared_ptr<GLDrawable> > animated;
