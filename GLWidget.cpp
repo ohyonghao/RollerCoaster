@@ -22,6 +22,7 @@ GLWidget::GLWidget(QWidget* parent)
 
     auto track = make_shared<Track>();
     auto building = make_shared<Cube>(10,QImage(":/brick_wall.jpg"));
+    auto smallbuilding = make_shared<Cube>(4,QImage(":/wood_wall.jpg"));
     auto cylinder = make_shared<Cylinder>(0.5,30);
     auto forest = make_shared<Forest>(size_x/2, 10);
     auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
@@ -30,6 +31,7 @@ GLWidget::GLWidget(QWidget* parent)
     drawables.push_back(make_shared<Ground>());
     drawables.push_back(track);
     drawables.push_back(building);
+    drawables.push_back(smallbuilding);
     drawables.push_back(cylinder);
     drawables.push_back(forest);
     drawables.push_back(smallforest);
@@ -49,6 +51,7 @@ GLWidget::GLWidget(QWidget* parent)
     currentView = &views[0];
 
     building->setPosition({30,30,0});
+    smallbuilding->setPosition({-30,-24,0});
     cylinder->setPosition({-30,-30,0});
     forest->setPosition({0,-40,0});
     smallforest->setPosition({-4,-36,0});

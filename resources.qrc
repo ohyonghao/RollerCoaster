@@ -4,5 +4,6 @@
         <file>vertexShader.vsh</file>
         <file>grass.tga</file>
         <file>brick_wall.jpg</file>
+        <file>wood_wall.jpg</file>
     </qresource>
 </RCC>
