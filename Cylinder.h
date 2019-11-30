@@ -11,8 +11,7 @@
 class Cylinder : public GLDrawable
 {
 public:
-    Cylinder();
-    Cylinder(double radius, double length);
+    Cylinder(double radius=1.0, double length=1.0);
 
     // Initializer. Creates the display list.
     bool Initialize() override;

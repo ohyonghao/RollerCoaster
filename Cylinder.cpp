@@ -2,12 +2,6 @@
 #include <cmath>
 #include <QOpenGLFunctions>
 
-Cylinder::Cylinder()
-    : GLDrawable{}
-{
-
-}
-
 Cylinder::Cylinder( double radius, double length)
     : GLDrawable{}
     , _length{length}
