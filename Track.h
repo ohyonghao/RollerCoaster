@@ -24,6 +24,7 @@ class Track : public GLDrawable {
     float	    speed{0.0f};	    // The train's speed, in world coordinates
 
     QVector3D _pos{0,0,0};
+    Rotation _rot{0,{0,0,0}};
 
     static const int	TRACK_NUM_CONTROLS;	// Constants about the track.
     static const float 	TRACK_CONTROLS[][3];
@@ -46,6 +47,7 @@ class Track : public GLDrawable {
     bool    isAnimated() override {return true;}
     void    attachView(ViewPort* view) override;
     void setPosition(const QVector3D& pos) override {_pos = pos;}
+    void setRotation(const Rotation& rot) override {_rot = rot;}
 };
 
 

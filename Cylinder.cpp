@@ -2,10 +2,11 @@
 #include <cmath>
 #include <QOpenGLFunctions>
 
-Cylinder::Cylinder( double radius, double length)
+Cylinder::Cylinder(const double radius, const double length, const QColor &color)
     : GLDrawable{}
     , _length{length}
     , _r{radius}
+    , _color{color}
 {
 
 }

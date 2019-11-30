@@ -19,6 +19,7 @@ class Ground : public GLDrawable {
     bool    initialized{false};    // Whether or not we have been initialised.
     QOpenGLTexture* texture;
     QVector3D _pos{0,0,0};
+    Rotation _rot{0, {0,0,1}};
 
   public:
     // Constructor. Can't do initialization here because we are
@@ -36,6 +37,7 @@ class Ground : public GLDrawable {
 
     // Translate
     void setPosition(const QVector3D& pos) override {_pos = pos;}
+    void setRotation(const Rotation& rot) override {_rot = rot;}
 };
 
 

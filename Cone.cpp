@@ -2,10 +2,11 @@
 #include <cmath>
 #include <QOpenGLFunctions>
 
-Cone::Cone( double radius, double length)
+Cone::Cone(const double radius, const double length, const QColor &color)
     : GLDrawable{}
     , _length{length}
     , _r{radius}
+    , _color{color}
 {
 
 }
