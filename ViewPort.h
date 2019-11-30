@@ -43,7 +43,7 @@ private:
     double _x_at{0};
     double _y_at{0};
 
-    QVector3D _eye{0,0,0};
+    QVector3D _eye{70,1,75};
     QVector3D _at{1,1,2};
     QVector3D _up{0,0,1};
 

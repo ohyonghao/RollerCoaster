@@ -35,7 +35,7 @@ GLWidget::GLWidget(QWidget* parent)
     views.push_back(ViewPort());
 
     track->attachView(&views[1]);
-    currentView = &views[1];
+    currentView = &views[0];
 }
 
 GLWidget::~GLWidget(){
@@ -244,24 +244,32 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
     }
     case '\'':
     {
+        // dir cross up
         // Translate to origin
         auto dir{currentView->lookAt() - currentView->eye()};
-        dir.normalize();
         QMatrix4x4 matrix;
-        matrix.rotate(-12.0, QVector3D::crossProduct(dir, currentView->up()) );
+        matrix.translate(-currentView->eye());
+        matrix.rotate(-1.0, QVector3D::crossProduct(currentView->up(), dir ) );
+        matrix.translate(currentView->eye());
+
         currentView->setEye(matrix*currentView->eye());
         currentView->setLookAt(matrix*currentView->lookAt());
+        //currentView->setUp(matrix*currentView->up());
         break;
     }
     case '.':
     {
+        // dir cross up
         // Translate to origin
         auto dir{currentView->lookAt() - currentView->eye()};
-        dir.normalize();
         QMatrix4x4 matrix;
-        matrix.rotate(12.0, QVector3D::crossProduct(dir, currentView->up()) );
+        matrix.translate(-currentView->eye());
+        matrix.rotate(1.0, QVector3D::crossProduct(currentView->up(), dir ) );
+        matrix.translate(currentView->eye());
+
         currentView->setEye(matrix*currentView->eye());
         currentView->setLookAt(matrix*currentView->lookAt());
+        //currentView->setUp(matrix*currentView->up());
         break;
     }
     case ';':
@@ -271,7 +279,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         dir /=2.0;
         QMatrix4x4 matrix;
         matrix.translate(-dir);
-        matrix.rotate(-12.0, currentView->up() );
+        matrix.rotate(-1.0, currentView->up() );
         matrix.translate(dir);
         currentView->setEye(matrix*currentView->eye());
         currentView->setLookAt(matrix*currentView->lookAt());
@@ -284,7 +292,7 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         dir /=2.0;
         QMatrix4x4 matrix;
         matrix.translate(-dir);
-        matrix.rotate(12.0, currentView->up() );
+        matrix.rotate(1.0, currentView->up() );
         matrix.translate(dir);
         currentView->setEye(matrix*currentView->eye());
         currentView->setLookAt(matrix*currentView->lookAt());
