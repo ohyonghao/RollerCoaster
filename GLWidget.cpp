@@ -7,6 +7,7 @@
 #include <algorithm>
 #include "Cube.h"
 #include "Ground.h"
+#include "Cylinder.h"
 #include "Track.h"
 #include <iostream>
 #include <QMatrix4x4>
@@ -18,10 +19,13 @@ GLWidget::GLWidget(QWidget* parent)
     setMouseTracking(false); // Only track when button pressed
 
     auto track = make_shared<Track>();
+    auto ground = make_shared<Cube>(10,QImage(":/brick_wall.jpg"));
+    auto cylinder = make_shared<Cylinder>(0.5,30);
     // Initialize our objects
     drawables.push_back(make_shared<Ground>());
     drawables.push_back(track);
-    drawables.push_back(make_shared<Cube>(10,QImage(":/brick_wall.jpg")));
+    drawables.push_back(ground);
+    drawables.push_back(cylinder);
 
     for(const auto& d: drawables){
         if( d->isAnimated() )
@@ -36,6 +40,8 @@ GLWidget::GLWidget(QWidget* parent)
 
     track->attachView(&views[1]);
     currentView = &views[0];
+
+    ground->setPosition({30,30,0});
 }
 
 GLWidget::~GLWidget(){
@@ -156,7 +162,6 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
 
     QVector3D eye;
     QVector3D at;
-    double dist = 2.0;
     switch ( event->buttons() )
     {
     case Qt::LeftButton:

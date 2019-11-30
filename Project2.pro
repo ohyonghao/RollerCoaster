@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Cube.cpp \
     CubicBspline.cpp \
+    Cylinder.cpp \
     GLDrawable.cpp \
     GLWidget.cpp \
     Ground.cpp \
@@ -30,6 +31,7 @@ SOURCES += \
 HEADERS += \
     Cube.h \
     CubicBspline.h \
+    Cylinder.h \
     GLDrawable.h \
     GLWidget.h \
     Ground.h \
