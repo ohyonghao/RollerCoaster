@@ -11,20 +11,21 @@
 #include "GLDrawable.h"
 #include <QOpenGLTexture>
 #include <QVector3D>
+#include <QImage>
+
+#include "Plane.h"
 
 class Ground : public GLDrawable {
   private:
-    GLubyte display_list{0};   // The display list that does all the work.
-    GLuint  texture_obj{0};    // The object for the grass texture.
     bool    initialized{false};    // Whether or not we have been initialised.
-    QOpenGLTexture* texture;
     QVector3D _pos{0,0,0};
     Rotation _rot{0, {0,0,1}};
+    Plane plane;
 
   public:
     // Constructor. Can't do initialization here because we are
     // created before the OpenGL context is set up.
-    Ground():GLDrawable{} { }
+    Ground(const QImage& image, uint32_t x = 1, uint32_t y = 1);
 
     // Destructor. Frees the display lists and texture object.
     ~Ground() override;

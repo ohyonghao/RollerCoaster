@@ -24,6 +24,7 @@ SOURCES += \
     GLDrawable.cpp \
     GLWidget.cpp \
     Ground.cpp \
+    Plane.cpp \
     Track.cpp \
     Tree.cpp \
     ViewPort.cpp \
@@ -41,6 +42,7 @@ HEADERS += \
     GLWidget.h \
     Ground.h \
     MainWindow.h \
+    Plane.h \
     Track.h \
     Tree.h \
     ViewPort.h \

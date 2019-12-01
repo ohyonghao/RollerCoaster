@@ -6,7 +6,6 @@
 
 
 #include "Ground.h"
-#include "libtarga.h"
 #include <GL/glu.h>
 #include <QOpenGLFunctions>
 #include <QImage>
@@ -14,14 +13,16 @@
 #include <iostream>
 
 using namespace std;
+Ground::Ground(const QImage& image, uint32_t x, uint32_t y)
+    : GLDrawable{}
+    , plane{image, x, y}
+{
+
+}
+
 // Destructor
 Ground::~Ground()
 {
-    if ( initialized )
-    {
-    glDeleteLists(display_list, 1);
-    delete texture;
-    }
 }
 
 
@@ -30,51 +31,8 @@ Ground::~Ground()
 bool
 Ground::Initialize(void)
 {
-
-    QImage image(":/grass.tga");
-    if(image.isNull()){
-        cout << "Failed to load" << endl;
-        return false;
-    }
     initializeOpenGLFunctions();
-    // This creates a texture object and binds it, so the next few operations
-    // apply to this texture.
-
-    texture = new QOpenGLTexture(image.mirrored());
-    texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
-    texture->setMagnificationFilter(QOpenGLTexture::Linear);
-
-    // Now do the geometry. Create the display list.
-    display_list = glGenLists(1);
-    glNewList(display_list, GL_COMPILE);
-	// Use white, because the texture supplies the color.
-	glColor3f(1.0, 1.0, 1.0);
-
-	// The surface normal is up for the ground.
-	glNormal3f(0.0, 0.0, 1.0);
-
-	// Turn on texturing and bind the grass texture.
-    glEnable(GL_TEXTURE_2D);
-    texture->bind();
-
-	// Draw the ground as a quadrilateral, specifying texture coordinates.
-	glBegin(GL_QUADS);
-	    glTexCoord2f(100.0, 100.0);
-	    glVertex3f(50.0, 50.0, 0.0);
-	    glTexCoord2f(-100.0, 100.0);
-	    glVertex3f(-50.0, 50.0, 0.0);
-	    glTexCoord2f(-100.0, -100.0);
-	    glVertex3f(-50.0, -50.0, 0.0);
-	    glTexCoord2f(100.0, -100.0);
-	    glVertex3f(50.0, -50.0, 0.0);
-	glEnd();
-
-	// Turn texturing off again, because we don't want everything else to
-	// be textured.
-	glDisable(GL_TEXTURE_2D);
-    glEndList();
-
-    // We only do all this stuff once, when the GL context is first set up.
+    plane.Initialize();
     initialized = true;
 
     return true;
@@ -85,9 +43,7 @@ Ground::Initialize(void)
 void
 Ground::Draw(void)
 {
-    glPushMatrix();
-    glCallList(display_list);
-    glPopMatrix();
+    plane.Draw();
 }
 
 

@@ -28,7 +28,7 @@ GLWidget::GLWidget(QWidget* parent)
     auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
 
     // Initialize our objects
-    drawables.push_back(make_shared<Ground>());
+    drawables.push_back(make_shared<Ground>(QImage(":/grass.tga"), 50, 50));
     drawables.push_back(track);
     drawables.push_back(building);
     drawables.push_back(smallbuilding);
