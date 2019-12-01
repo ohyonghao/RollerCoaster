@@ -10,6 +10,7 @@
 
 #include "GLDrawable.h"
 #include "ViewPort.h"
+#include "Flag.h"
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
 {
@@ -35,6 +36,7 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
 
         std::vector<ViewPort> views;
         ViewPort *currentView;
+        std::shared_ptr<Flag> flag;
 
         QTimer coasterTimer;
 

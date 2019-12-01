@@ -25,7 +25,7 @@ GLWidget::GLWidget(QWidget* parent)
     auto smallbuilding = make_shared<Cube>(4,QImage(":/wood_wall.jpg"));
     auto forest = make_shared<Forest>(size_x/2, 10);
     auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
-    auto flag = make_shared<Flag>(QImage(":/Flag_of_Taiwan.jpg"),4,5);
+    flag = make_shared<Flag>(QImage(":/Flag_of_Taiwan.jpg"),2,3);
 
     // Initialize our objects
     drawables.push_back(make_shared<Ground>(QImage(":/grass.tga"), 50, 50));
@@ -53,6 +53,7 @@ GLWidget::GLWidget(QWidget* parent)
     building->setPosition({30,30,0});
     smallbuilding->setPosition({-30,-24,0});
     flag->setPosition({-30,-30,0});
+    flag->setRotation({90,{0,0,1}});
     forest->setPosition({0,-40,0});
     smallforest->setPosition({-4,-36,0});
 }
@@ -321,6 +322,9 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         break;
     case '2':
         currentView = &views[1];
+        break;
+    case 'F':
+        flag->toggleAnimation();
         break;
     default:
         QGLWidget::keyPressEvent(event);

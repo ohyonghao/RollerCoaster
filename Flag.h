@@ -14,10 +14,16 @@ public:
     ~Flag() override{}
 
     // Initializer. Creates the display list.
-    bool    Initialize(void) override;
+    bool    Initialize() override;
 
     // Does the drawing.
-    void    Draw(void) override;
+    void    Draw() override;
+
+    // Animate the thing
+    void Update(double dt) override;
+    bool isAnimated() override {return true;}
+
+    void toggleAnimation(){animated = !animated;}
 
     // Translate
     void setPosition(const QVector3D& pos) override {_pos = pos;}
@@ -29,6 +35,12 @@ private:
     QVector3D _pos{0,0,0};
     Rotation _rot{0, {0,0,1}};
     bool    initialized{false};    // Whether or not we have been initialised.
+
+    bool animated{false};
+    float pole_posn{30.0};
+    const float speed{4.0};
+    bool dir{1};
+    QVector3D tplane{0,0,30};
 };
 
 #endif // FLAG_H
