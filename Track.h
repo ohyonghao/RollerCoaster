@@ -11,12 +11,18 @@
 #include "GLDrawable.h"
 #include "CubicBspline.h"
 #include "ViewPort.h"
+#include "Cube.h"
+#include <QOpenGLFunctions>
+
 #include <QVector3D>
+#include <memory>
 
 class Track : public GLDrawable {
   private:
-    GLubyte 	    track_list;	    // The display list for the track.
-    GLubyte 	    train_list;	    // The display list for the train.
+    GLuint          track_list;	    // The display list for the track.
+    GLuint          rail_list[2]; // rails
+    Cube            train;  // The train
+    std::unique_ptr<QOpenGLTexture> texture;
     bool    	    initialized{false};    // Whether or not we have been initialized.
     CubicBspline    *track;	    // The spline that defines the track.
     float	    posn_on_track{0.0f};  // The train's parametric position on the
@@ -36,7 +42,7 @@ class Track : public GLDrawable {
 
   public:
     // Constructor
-    Track():GLDrawable{} { }
+    Track();
 
     // Destructor
     ~Track() override;

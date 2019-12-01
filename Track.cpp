@@ -10,6 +10,7 @@
 #include <GL/glu.h>
 #include <QOpenGLFunctions>
 #include <iostream>
+#include <QVector3D>
 
 using namespace std;
 
@@ -22,6 +23,11 @@ const float Track::TRACK_CONTROLS[TRACK_NUM_CONTROLS][3] =
 // The carriage energy and mass
 const float Track::TRAIN_ENERGY = 250.0f;
 
+Track::Track()
+    : GLDrawable{}
+    , train{0.75, Qt::red}
+{
+}
 
 // Normalize a 3d vector.
 static void
@@ -43,8 +49,9 @@ Track::~Track()
 {
     if ( initialized )
     {
-	glDeleteLists(track_list, 1);
-	glDeleteLists(train_list, 1);
+        glDeleteLists(track_list, 1);
+        glDeleteLists(rail_list[0], 1);
+        glDeleteLists(rail_list[1], 1);
     }
 }
 
@@ -54,14 +61,15 @@ bool
 Track::Initialize(void)
 {
     initializeOpenGLFunctions();
-    CubicBspline    refined(3, true);
-    int		    n_refined;
-    double	    p[3];
-    int		    i;
+    CubicBspline refined(3, true);
+    int		     n_refined;
+    double	     p[3];
+
+    texture = make_unique<QOpenGLTexture>(QImage(":/wood_board.png"));
 
     // Create the track spline.
     track = new CubicBspline(3, true);
-    for ( i = 0 ; i < TRACK_NUM_CONTROLS ; i++ )
+    for ( int i = 0 ; i < TRACK_NUM_CONTROLS ; i++ )
 	track->Append_Control(TRACK_CONTROLS[i]);
 
     // Refine it down to a fixed tolerance. This means that any point on
@@ -73,62 +81,82 @@ Track::Initialize(void)
     // Create the display list for the track - just a set of line segments
     // We just use curve evaluated at integer paramer values, because the
     // subdivision has made sure that these are good enough.
+    vector<QVector3D> rails[2];
     track_list = glGenLists(1);
+
     glNewList(track_list, GL_COMPILE);
-	glColor3f(1.0f, 1.0, 1.0f);
-	glBegin(GL_LINE_STRIP);
-	    for ( i = 0 ; i <= n_refined ; i++ )
-	    {
-        refined.Evaluate_Point(i, p);
-        glVertex3dv(p);
-	    }
-	glEnd();
+
+    glColor3f(1.0f, 1.0, 1.0f);
+    glEnable(GL_TEXTURE_2D);
+    texture->bind();
+    glBegin(GL_QUAD_STRIP);
+        for ( int i = 0 ; i <= n_refined ; i++ )
+        {
+            QVector3D pt1;
+            refined.Evaluate_Point(i, p);
+            pt1.setX(p[0]);
+            pt1.setY(p[1]);
+            pt1.setZ(p[2]);
+
+            refined.Evaluate_Point(i+1, p);
+            QVector3D pt2;
+            pt2.setX(p[0]);
+            pt2.setY(p[1]);
+            pt2.setZ(p[2]);
+
+            auto dir = pt2 - pt1;
+            dir = QVector3D::crossProduct(dir, {0,0,1});
+            dir.normalize();
+            auto up = pt2 - pt1;
+            up = QVector3D::crossProduct(up, dir);
+            up.normalize();
+            up*=0.0625;
+
+            // Calculate the rail points
+            rails[0].push_back(pt1+dir*0.25);
+            rails[0].push_back(pt1+dir*0.25+up);
+
+            rails[1].push_back(pt1-dir*0.25);
+            rails[1].push_back(pt1-dir*0.25+up);
+
+            // Then the boards
+            pt1 = pt1 + dir*0.5;
+            p[0] = pt1.x();
+            p[1] = pt1.y();
+            p[2] = pt1.z();
+            glTexCoord2f(i, 1);
+            glVertex3dv(p);
+            pt1 = pt1 - dir;
+            p[0] = pt1.x();
+            p[1] = pt1.y();
+            p[2] = pt1.z();
+            glTexCoord2f(i, 0);
+            glVertex3dv(p);
+        }
+    glEnd();
+    texture.release();
+    glDisable(GL_TEXTURE_2D);
     glEndList();
+
+    for( int i = 0; i < 2; ++i ){
+        rail_list[i] = glGenLists(1);
+        glNewList(rail_list[i], GL_COMPILE);
+        glColor3f(169.0f/255.0f, 169.0f/255.0f, 169.0f/255.0f);
+        glBegin(GL_QUAD_STRIP);
+        {
+            for( const auto& pt : rails[i] ){
+                glVertex3f(pt.x(),pt.y(),pt.z());
+            }
+        }
+        glEnd();
+        glEndList();
+    }
 
     // Set up the train. At this point a cube is drawn. NOTE: The
     // x-axis will be aligned to point along the track. The origin of the
     // train is assumed to be at the bottom of the train.
-    train_list = glGenLists(1);
-    glNewList(train_list, GL_COMPILE);
-    glColor3f(1.0, 0.0, 0.0);
-    glBegin(GL_QUADS);
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(0.5f, 0.5f, 1.0f);
-	glVertex3f(-0.5f, 0.5f, 1.0f);
-	glVertex3f(-0.5f, -0.5f, 1.0f);
-	glVertex3f(0.5f, -0.5f, 1.0f);
 
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glVertex3f(0.5f, -0.5f, 0.0f);
-	glVertex3f(-0.5f, -0.5f, 0.0f);
-	glVertex3f(-0.5f, 0.5f, 0.0f);
-	glVertex3f(0.5f, 0.5f, 0.0f);
-
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(0.5f, 0.5f, 0.0f);
-	glVertex3f(0.5f, 0.5f, 1.0f);
-	glVertex3f(0.5f, -0.5f, 1.0f);
-	glVertex3f(0.5f, -0.5f, 0.0f);
-
-	glNormal3f(-1.0f, 0.0f, 0.0f);
-	glVertex3f(-0.5f, 0.5f, 1.0f);
-	glVertex3f(-0.5f, 0.5f, 0.0f);
-	glVertex3f(-0.5f, -0.5f, 0.0f);
-	glVertex3f(-0.5f, -0.5f, 1.0f);
-
-	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(0.5f, 0.5f, 1.0f);
-	glVertex3f(0.5f, 0.5f, 0.0f);
-	glVertex3f(-0.5f, 0.5f, 0.0f);
-	glVertex3f(-0.5f, 0.5f, 1.0f);
-
-	glNormal3f(0.0f, -1.0f, 0.0f);
-	glVertex3f(0.5f, -0.5f, 0.0f);
-	glVertex3f(0.5f, -0.5f, 1.0f);
-	glVertex3f(-0.5f, -0.5f, 1.0f);
-	glVertex3f(-0.5f, -0.5f, 0.0f);
-    glEnd();
-    glEndList();
+    train.Initialize();
 
     initialized = true;
 
@@ -152,8 +180,16 @@ Track::Draw(void)
     glPushMatrix();
 
     // Draw the track
+    glDisable(GL_CULL_FACE);
     glCallList(track_list);
 
+    // Draw rails
+    glPushMatrix();
+    glTranslatef(0,0,0.125);
+    glCallList(rail_list[0]);
+    glCallList(rail_list[1]);
+    glPopMatrix();
+    glEnable(GL_CULL_FACE);
     glPushMatrix();
 
     // Figure out where the train is
@@ -175,7 +211,7 @@ Track::Draw(void)
     glRotatef((float)angle, 0.0f, 1.0f, 0.0f);
 
     // Draw the train
-    glCallList(train_list);
+    train.Draw();
 
     glPopMatrix();
     glPopMatrix();

@@ -6,5 +6,6 @@
         <file>brick_wall.jpg</file>
         <file>wood_wall.jpg</file>
         <file>Flag_of_Taiwan.jpg</file>
+        <file>wood_board.png</file>
     </qresource>
 </RCC>

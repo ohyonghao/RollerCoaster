@@ -2,10 +2,9 @@
 #include "GLDrawable.h"
 #include <GL/glu.h>
 
-Cube::Cube(double size, const QVector3D &pos, const QColor &color )
+Cube::Cube(double size, const QColor &color )
     : GLDrawable{}
     , _size{size}
-    , _pos{pos}
     , _color{color}
 {
 }
@@ -42,7 +41,6 @@ void Cube::setTexture(){
 }
 bool Cube::Initialize(){
     initializeOpenGLFunctions();
-
     // Load texture
     setTexture();
 
@@ -60,8 +58,6 @@ bool Cube::Initialize(){
         glEnable(GL_TEXTURE_2D);
         texture->bind();
     }
-    // Translate the position
-    glTranslatef( _pos.x(), _pos.y(), _pos.z() );
 
     // An idea for this is to store the texture pointers as an
     // array of 6, one for each side. We need a way to set
@@ -80,6 +76,7 @@ bool Cube::Initialize(){
 
     // draw the cube
     glBegin(GL_QUADS);
+
     // Top
     glNormal3f(0.0f, 0.0f, 1.0f);
     if(tex) glTexCoord2f(s, s);
@@ -148,14 +145,17 @@ bool Cube::Initialize(){
     glEnd();
 
     // Turn off texturing
-    if( tex )
+    if( tex ){
         glDisable(GL_TEXTURE_2D);
+        texture->release();
+    }
     glEndList();
 
     return true;
 }
 void Cube::Draw(){
     glPushMatrix();
+    glTranslatef( _pos.x(), _pos.y(), _pos.z() );
     glCallList(Cube_list);
     glPopMatrix();
 }

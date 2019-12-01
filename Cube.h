@@ -10,7 +10,7 @@
 class Cube : public GLDrawable
 {
 public:
-    Cube(double size, const QVector3D& pos={0.0,0.0,0.0}, const QColor& color={0,0,0});
+    Cube(double size, const QColor& color={0,0,0});
     Cube(double size, const QImage& texture, const QVector3D& pos={0.0,0.0,0.0});
     ~Cube() override{}
 
