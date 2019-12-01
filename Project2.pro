@@ -20,6 +20,7 @@ SOURCES += \
     Cube.cpp \
     CubicBspline.cpp \
     Cylinder.cpp \
+    Flag.cpp \
     Forest.cpp \
     GLDrawable.cpp \
     GLWidget.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     Cube.h \
     CubicBspline.h \
     Cylinder.h \
+    Flag.h \
     Forest.h \
     GLDrawable.h \
     GLWidget.h \

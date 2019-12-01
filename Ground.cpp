@@ -13,7 +13,7 @@
 #include <iostream>
 
 using namespace std;
-Ground::Ground(const QImage& image, uint32_t x, uint32_t y)
+Ground::Ground(const QImage& image, const int32_t x, const int32_t y)
     : GLDrawable{}
     , plane{image, x, y}
 {

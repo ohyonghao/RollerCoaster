@@ -25,7 +25,7 @@ class Ground : public GLDrawable {
   public:
     // Constructor. Can't do initialization here because we are
     // created before the OpenGL context is set up.
-    Ground(const QImage& image, uint32_t x = 1, uint32_t y = 1);
+    Ground(const QImage& image, const int32_t x = 1, const int32_t y = 1);
 
     // Destructor. Frees the display lists and texture object.
     ~Ground() override;

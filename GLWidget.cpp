@@ -7,7 +7,7 @@
 #include <algorithm>
 #include "Cube.h"
 #include "Ground.h"
-#include "Cylinder.h"
+#include "Flag.h"
 #include "Cone.h"
 #include "Forest.h"
 #include "Track.h"
@@ -23,16 +23,16 @@ GLWidget::GLWidget(QWidget* parent)
     auto track = make_shared<Track>();
     auto building = make_shared<Cube>(10,QImage(":/brick_wall.jpg"));
     auto smallbuilding = make_shared<Cube>(4,QImage(":/wood_wall.jpg"));
-    auto cylinder = make_shared<Cylinder>(0.5,30);
     auto forest = make_shared<Forest>(size_x/2, 10);
     auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
+    auto flag = make_shared<Flag>(QImage(":/Flag_of_Taiwan.jpg"),4,5);
 
     // Initialize our objects
     drawables.push_back(make_shared<Ground>(QImage(":/grass.tga"), 50, 50));
     drawables.push_back(track);
     drawables.push_back(building);
     drawables.push_back(smallbuilding);
-    drawables.push_back(cylinder);
+    drawables.push_back(flag);
     drawables.push_back(forest);
     drawables.push_back(smallforest);
 
@@ -52,7 +52,7 @@ GLWidget::GLWidget(QWidget* parent)
 
     building->setPosition({30,30,0});
     smallbuilding->setPosition({-30,-24,0});
-    cylinder->setPosition({-30,-30,0});
+    flag->setPosition({-30,-30,0});
     forest->setPosition({0,-40,0});
     smallforest->setPosition({-4,-36,0});
 }
