@@ -9,7 +9,7 @@ class Subdivide : public GLDrawable
 {
 public:
 
-    Subdivide( const double length=1.0, const QColor& color=Qt::white);
+    Subdivide(const float length=1.0, const QColor& color=Qt::white);
     // Initializer. Creates the display list.
     bool Initialize() override;
 
@@ -28,30 +28,30 @@ public:
     const Subdivide& operator--(int);
 
 private:
-    static constexpr double X{0.525731112119133696};
-    static constexpr double Z{0.850650808352039932};
+    static constexpr float X{0.525731112119133696f};
+    static constexpr float Z{0.850650808352039932f};
 
 
-    void normCrossProd (QVector3D& u, QVector3D& v, QVector3D& n);
-    void normFace(GLfloat v1[3], GLfloat v2[3], GLfloat v3[3]);
+    void normCrossProd (const QVector3D &u, const QVector3D &v, QVector3D& n);
+    void normFace(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3);
 
     void subdivide( QVector3D& v1, QVector3D& v2, QVector3D v3, int depth );
-    void drawTriangle(QVector3D& v1, QVector3D& v2, QVector3D v3);
-    double _length{1.0};
-    bool _mesh{false};
-    uint32_t levels{0};
-    QVector3D _pos{0,0,0};
+    void drawTriangle(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3);
+    float _length{1.0};
+    int32_t levels{0};
     Rotation _rot{0,{0,0,0}};
+    QVector3D _pos{0,0,0};
 
     QColor _color{Qt::white};
 
     GLuint Subdivide_list;  // The display list for the Cube.
 
     /* triangle indices */
-    const std::vector<QVector3D> tindices;
+    const std::vector<std::vector<size_t>> tindices;
     /* vertex data array */
     const std::vector<QVector3D> vdata;
 
+    bool _mesh{false};
 };
 
 #endif // SUBDIVIDE_H
