@@ -11,6 +11,7 @@
 #include "GLDrawable.h"
 #include "ViewPort.h"
 #include "Flag.h"
+#include "Subdivide.h"
 
 class GLWidget : public QGLWidget//, protected QOpenGLFunctions
 {
@@ -37,6 +38,7 @@ class GLWidget : public QGLWidget//, protected QOpenGLFunctions
         std::vector<ViewPort> views;
         ViewPort *currentView;
         std::shared_ptr<Flag> flag;
+        std::shared_ptr<Subdivide> sphere;
 
         QTimer coasterTimer;
 

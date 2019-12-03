@@ -11,6 +11,7 @@
 #include "Cone.h"
 #include "Forest.h"
 #include "Track.h"
+#include "Subdivide.h"
 #include <iostream>
 #include <QMatrix4x4>
 using namespace std;
@@ -25,6 +26,7 @@ GLWidget::GLWidget(QWidget* parent)
     auto smallbuilding = make_shared<Cube>(4,QImage(":/wood_wall.jpg"));
     auto forest = make_shared<Forest>(size_x/2, 10);
     auto smallforest = make_shared<Forest>(size_x/2, 10, 4);
+    sphere = make_shared<Subdivide>(4,Qt::blue);
     flag = make_shared<Flag>(QImage(":/Flag_of_Taiwan.jpg"),2,3);
 
     // Initialize our objects
@@ -35,6 +37,7 @@ GLWidget::GLWidget(QWidget* parent)
     drawables.push_back(flag);
     drawables.push_back(forest);
     drawables.push_back(smallforest);
+    drawables.push_back(sphere);
 
     for(const auto& d: drawables){
         if( d->isAnimated() )
@@ -54,6 +57,7 @@ GLWidget::GLWidget(QWidget* parent)
     smallbuilding->setPosition({-30,-24,0});
     flag->setPosition({-30,-30,0});
     flag->setRotation({90,{0,0,1}});
+    sphere->setPosition({0,0,4});
     forest->setPosition({0,-40,0});
     smallforest->setPosition({-4,-36,0});
 }
@@ -317,6 +321,20 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         currentView->setLookAt(matrix*currentView->lookAt());
         break;
     }
+    case 'G':
+        ++*sphere;
+        break;
+    case 'C':
+        --*sphere;
+        break;
+    case 'H':
+        (*sphere)++;
+        sphere->setPosition(sphere->getPosition() + QVector3D{0,0,2});
+        break;
+    case 'T':
+        (*sphere)--;
+        sphere->setPosition(sphere->getPosition() - QVector3D{0,0,2});
+        break;
     case '1':
         currentView = &views[0];
         break;

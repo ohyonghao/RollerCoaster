@@ -26,6 +26,7 @@ SOURCES += \
     GLWidget.cpp \
     Ground.cpp \
     Plane.cpp \
+    Subdivide.cpp \
     Track.cpp \
     Tree.cpp \
     ViewPort.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     Ground.h \
     MainWindow.h \
     Plane.h \
+    Subdivide.h \
     Track.h \
     Tree.h \
     ViewPort.h \
