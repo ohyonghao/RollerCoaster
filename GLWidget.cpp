@@ -335,6 +335,9 @@ void GLWidget::keyPressEvent(QKeyEvent *event){
         (*sphere)--;
         sphere->setPosition(sphere->getPosition() - QVector3D{0,0,2});
         break;
+    case 'M':
+        sphere->toggleMesh();
+        break;
     case '1':
         currentView = &views[0];
         break;

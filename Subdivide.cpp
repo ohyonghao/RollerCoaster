@@ -34,7 +34,8 @@ bool Subdivide::Initialize(){
     Subdivide_list = glGenLists(1);
     glNewList(Subdivide_list, GL_COMPILE);
     glColor3d(_color.redF(), _color.greenF(), _color.blueF());
-
+    if( _mesh )
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
     vector<QVector3D> data(vdata.size());
 
     transform(vdata.begin(), vdata.end(), data.begin(), [this](auto &v){
@@ -44,7 +45,8 @@ bool Subdivide::Initialize(){
     for( auto& index: tindices ){
         subdivide(data[index[0]], data[index[1]], data[index[2]], levels);
     }
-
+    if( _mesh )
+        glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     glEndList();
     return true;
 }

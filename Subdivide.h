@@ -20,6 +20,7 @@ public:
     void setPosition(const QVector3D& pos) override {_pos = pos;}
     const QVector3D& getPosition(){return _pos;}
     void setRotation(const Rotation& rot) override {_rot = rot;}
+    void toggleMesh(){_mesh = !_mesh; Initialize();}
 
     Subdivide& operator++();
     const Subdivide& operator++(int);
@@ -37,6 +38,7 @@ private:
     void subdivide( QVector3D& v1, QVector3D& v2, QVector3D v3, int depth );
     void drawTriangle(QVector3D& v1, QVector3D& v2, QVector3D v3);
     double _length{1.0};
+    bool _mesh{false};
     uint32_t levels{0};
     QVector3D _pos{0,0,0};
     Rotation _rot{0,{0,0,0}};
