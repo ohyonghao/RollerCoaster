@@ -225,7 +225,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *event){
-    cout << "key pressed: " << static_cast<char>(event->key()) << endl;
+    //cout << "key pressed: " << static_cast<char>(event->key()) << endl;
     switch(event->key()){
     case 'O':
     {
